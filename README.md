@@ -1,4 +1,10 @@
-# ChatGPT-Tutorial
+# ChatGPT-Django
  A Django project which connects to openai ChatGPT using API.
 
-#### My Project's Article In Medium.com: [Link](https://medium.com/@johnkh2002/how-to-implement-chat-gpt-in-django-d741fc8f27de)
+## Usage
+
+1. Create a virtual environment
+2. `pip install -r requirements.txt`
+3. Set environment variable "OPENAI_API_KEY"
+4. `python manage.py migrate`
+5. `python manage.py runserver`

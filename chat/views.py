@@ -4,34 +4,46 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import openai
 
+import os
+
+from markdown2 import Markdown
+
 def chat(request):
-    chats = Chat.objects.all()
+    if 'chat_messages' in request.session:
+        chats = request.session["chat_messages"]
+    else:
+        chats = [
+            {"role": "system", "content": "The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know."},
+        ]
+        request.session["chat_messages"] = chats
+
     return render(request, 'chat.html', {
         'chats': chats,
     })
 
+
 @csrf_exempt
 def Ajax(request):
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest': # Check if request is Ajax
+    # Check if request is Ajax
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
 
         text = request.POST.get('text')
-        print(text)
+        # print(text)
+        request.session["chat_messages"].append(
+            {"role": "user", "content": text})
 
-        openai.api_key = "YOUR_API_KEY" # Here you have to add your api key.
+        openai.api_key = os.environ["OPENAI_API_KEY"]
         res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role": "user", "content": f"{text}"}
-        ]
+            model="gpt-3.5-turbo",
+            messages=request.session["chat_messages"]
         )
 
-        response = res.choices[0].message["content"]
-        print(response)
+        response = res.choices[0].message
+        ai_message = response["content"]
+        # print(ai_message)
+        request.session["chat_messages"].append(response)
+        request.session.modified = True
 
-        chat = Chat.objects.create(
-            text = text,
-            gpt = response
-        )
-
-        return JsonResponse({'data': response,})
+        markdowner = Markdown(extras=["fenced-code-blocks"])
+        return JsonResponse({'data': markdowner.convert(ai_message), })
     return JsonResponse({})
