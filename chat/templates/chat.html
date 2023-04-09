@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 {% load static %}
 {% block head %}
-  <title>ChatGPT</title>
+  <title>{{ pagetitle }}</title>
 {% endblock head %}
 {% block body %}
   <section class="bg bg-gradient bg-light">
@@ -11,7 +11,7 @@
           <div class="row d-flex justify-content-center">
             <div class="col-md-7 col-xl-10 mb-4 mb-md-0">
               <div class="py-4 d-flex flex-row">
-                <h1>ChatGPT</h1>
+                <h1>{{ pagetitle }}</h1>
               </div>
               <div class="card text-white" id="chatCard">
                 {% load markdown_extras %}
@@ -21,7 +21,7 @@
                       <h5 class="card-title">{{ chat.content }}</h5>
                     </div>
                   {% elif chat.role == "assistant" %}
-                    <div class="card-body bg bg-light text-dark">
+                    <div class="card-body text-assistant">
                       <h5 class="card-title">{{ chat.content | markdown | safe }}</h5>
                     </div>
                   {% endif %}
@@ -42,6 +42,14 @@
               </div>
               <div class="d-grid gap-2 mt-4">
                 <button id="submitBtn" class="btn btn-primary fs-5">Send</button>
+              </div>
+              <div class="d-grid gap-2 mt-4">
+                <form method="post" action="">
+                  {% csrf_token %}
+                  <button id="resetBtn" class="btn btn-danger fs-5" type="submit" name="action" value="clear">
+                    <i class="fa-solid fa-eraser"></i> Reset Conversation
+                  </button>
+                </form>
               </div>
               <br/>
             </div>

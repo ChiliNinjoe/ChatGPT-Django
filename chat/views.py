@@ -2,6 +2,8 @@ from django.shortcuts import render
 from .models import *
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+
 import openai
 
 import os
@@ -9,17 +11,23 @@ import os
 from markdown2 import Markdown
 
 def chat(request):
+    if request.method == 'POST':
+        if request.POST.get('action')== 'clear':
+            del request.session['chat_messages']
+    
     if 'chat_messages' in request.session:
         chats = request.session["chat_messages"]
     else:
         chats = [
-            {"role": "system", "content": "The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know."},
+            {"role": "system", "content": settings.CHAT_SYSTEM_MESSAGES[int(os.getenv('SYSTEM_MESSAGE_INDEX',0))]},
         ]
         request.session["chat_messages"] = chats
 
-    return render(request, 'chat.html', {
+    context = {
         'chats': chats,
-    })
+        'pagetitle': settings.APP_TITLE
+    }
+    return render(request, 'chat.html', context)
 
 
 @csrf_exempt

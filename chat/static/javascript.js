@@ -2,6 +2,13 @@ document.addEventListener('DOMContentLoaded', function(){
 
     document.querySelector('#submitBtn').addEventListener('click', () => chat_ajax());
 
+    document.querySelector('#userText').addEventListener('keydown', function(event) {
+        if (event.keyCode === 13 && !event.shiftKey) {
+          event.preventDefault();
+          document.querySelector('#submitBtn').click();
+        }
+      });
+
 });
 
 function chat_ajax(){
@@ -33,7 +40,7 @@ function chat_ajax(){
         success: (res)=> {
             let response = res.data
             chatCard.innerHTML += `
-            <div class="card-body bg bg-light text-dark">
+            <div class="card-body text-assistant">
                   <h5 class="card-title">${response}</h5>
             </div>
             `

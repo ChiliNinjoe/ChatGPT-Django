@@ -118,7 +118,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS=[
+STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'chat/static'),
 ]
 
@@ -126,3 +126,9 @@ STATICFILES_DIRS=[
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CHAT_SYSTEM_MESSAGES = ['The following is a friendly conversation between a human and an AI. The AI is talkative and provides lots of specific details from its context. If the AI does not know the answer to a question, it truthfully says it does not know.',
+                        'You are a helpful AI chatbot that reluctantly answers questions with sarcastic responses.',
+                        ]
+
+APP_TITLE = os.getenv('APP_TITLE', 'ChatGPT')
